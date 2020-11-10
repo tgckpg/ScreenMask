@@ -1,0 +1,38 @@
+﻿<Window x:Class="ScreenMask.Mask"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScreenMask"
+        mc:Ignorable="d"
+        xmlns:scmsk="clr-namespace:ScreenMask.Converters"
+        AllowsTransparency="True" WindowStyle="None"
+        Background="Black"
+        Loaded="WindowLoaded"
+        MouseDown="Grid_MouseDown"
+        MouseRightButtonUp="Grid_MouseRightButtonUp"
+        KeyDown="Window_KeyDown"
+        Title="Mask">
+    <WindowChrome.WindowChrome>
+        <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0"/>
+    </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <scmsk:ToDecimalConverter x:Key="ToDecimalConverter" />
+        <ContextMenu x:Key="MainMenu">
+            <MenuItem Header="Move" Click="Move_Click" />
+            <MenuItem Header="Resize" Click="Resize_Click" />
+            <MenuItem Header="Color" Click="Color_Click" />
+            <MenuItem Header="Delete this mask" Click="DeleteThisMask_Click" />
+            <MenuItem x:Name="AlwaysOnTop" Header="Always on top" Click="ToggleAlwaysTop" IsChecked="True" IsCheckable="True" />
+        </ContextMenu>
+    </Window.Resources>
+    <Border x:Name="EditMask" Background="#11FFFFFF" Visibility="Collapsed">
+        <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Foreground="White">
+                   X: <Run Text="{Binding Left, Mode=OneWay, Converter={StaticResource ToDecimalConverter}, ConverterParameter=2}"/>
+                   Y: <Run Text="{Binding Top, Mode=OneWay, Converter={StaticResource ToDecimalConverter}, ConverterParameter=2}"/>
+                   W: <Run Text="{Binding Width, Mode=OneWay, Converter={StaticResource ToDecimalConverter}, ConverterParameter=2}"/>
+                   H: <Run Text="{Binding Height, Mode=OneWay, Converter={StaticResource ToDecimalConverter}, ConverterParameter=2}"/>
+        </TextBlock>
+    </Border>
+</Window>

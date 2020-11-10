@@ -1,0 +1,40 @@
+﻿<Window x:Class="ScreenMask.FullScreenDrawSpace"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScreenMask"
+        mc:Ignorable="d"
+        MouseUp="Window_MouseUp"
+        Background="Transparent"
+        AllowsTransparency="True"
+        WindowState="Maximized" WindowStyle="None"
+        Title="Draw">
+    <Grid Cursor="Cross" MouseMove="Grid_MouseMove" MouseDown="BeginDraw">
+        <Border Background="#00000000">
+            <Border.Triggers>
+                <EventTrigger RoutedEvent="Border.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation To="#77000000"
+                                            From="#00000000"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
+                                            FillBehavior="HoldEnd" 
+                                            Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Border.Triggers>
+        </Border>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Foreground="White" Text="Click and drag to draw" />
+            <TextBlock Foreground="White" x:Name="MousePosLabel" Text="" />
+       </StackPanel>
+        <Canvas>
+            <Rectangle x:Name="DefiningArea"
+                       Fill="#77FFFFFF"
+                       Canvas.Left="0" Canvas.Top="0"
+                       Height="0" Width="0"/>
+        </Canvas>
+    </Grid>
+</Window>

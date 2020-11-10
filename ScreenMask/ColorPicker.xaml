@@ -1,0 +1,45 @@
+﻿<Window x:Class="ScreenMask.ColorPicker"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScreenMask"
+        mc:Ignorable="d"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True" WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        Title="Set Color" Height="250" Width="400">
+    <Border BorderBrush="White" BorderThickness="5">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition  Width="*" />
+                <ColumnDefinition  Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+            </Grid.RowDefinitions>
+            <Border Grid.ColumnSpan="2" Background="White" MouseDown="Border_MouseDown">
+                <TextBlock Text="Set Color" Margin="5" />
+            </Border>
+            <Border x:Name="ColorPallet" Grid.Row="1" Grid.ColumnSpan="2" Background="Black" />
+            <Border Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Background="White" />
+            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="5"
+                        Orientation="Horizontal">
+                <TextBlock Padding="5" Text="#" FontSize="14" />
+                <TextBox Margin="5,0,0,0" Padding="5" Width="100"
+                         MaxLength="8"
+                         TextChanged="TextBox_TextChanged"
+                         FontSize="14" Text="ff000000" />
+            </StackPanel>
+            <Button Grid.Row="3" Grid.Column="0" Margin="5"
+                    x:Name="OK_Button"
+                    Click="OK_Click" Content="OK" />
+            <Button Grid.Row="3" Grid.Column="1" Margin="5"
+                    Click="Cancel_Click" Content="Cancel" />
+        </Grid>
+    </Border>
+</Window>
