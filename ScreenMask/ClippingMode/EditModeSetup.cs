@@ -160,10 +160,9 @@ namespace ScreenMask.ClippingMode
 				}
 			}
 
-			Elem.Focusable = true;
-
 			Elem.KeyDown += ( s, e ) =>
 			{
+				e.Handled = true;
 				switch ( e.Key )
 				{
 					case Key.Up:
@@ -183,8 +182,7 @@ namespace ScreenMask.ClippingMode
 
 			Elem.MouseDown += ( s, e ) =>
 			{
-				Elem.Focus();
-
+				FocusManager.SetFocusedElement( Stage, Elem );
 				Elem.CaptureMouse();
 				DragStart = e.GetPosition( Stage );
 				Elem.MouseMove += _OnMove;

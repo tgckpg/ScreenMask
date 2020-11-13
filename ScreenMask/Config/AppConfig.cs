@@ -20,7 +20,7 @@ namespace ScreenMask.Config
 
 		public void Save() => Conf.Save( ConfigurationSaveMode.Modified );
 
-		public IList<MaskDef> Masks
+		public IEnumerable<MaskDef> Masks
 		{
 			get => JsonConvert.DeserializeObject<MaskDef[]>( Conf.AppSettings.Settings[ "Masks" ]?.Value ?? "[]" );
 			set

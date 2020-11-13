@@ -32,16 +32,7 @@ namespace ScreenMask
 
 		protected override void SaveSettings()
 		{
-			List<MaskDef> MaskDefs = new List<MaskDef>();
-			foreach ( Window W in Application.Current.Windows )
-			{
-				if ( W is Mask M )
-				{
-					MaskDefs.Add( M.AsDef() );
-				}
-			}
-
-			AppConfig.Current.Masks = MaskDefs;
+			AppConfig.Current.Masks = Application.Current.Windows.CastOnly<Mask>().Select( x => x.AsDef() );
 			AppConfig.Current.GadgetPos = new Point( Top, Left );
 			AppConfig.Current.Save();
 		}
@@ -52,8 +43,7 @@ namespace ScreenMask
 			Top = P.X;
 			Left = P.Y;
 
-			foreach ( MaskDef Def in AppConfig.Current.Masks )
-				CreateMask( Def );
+			AppConfig.Current.Masks.Do( x => CreateMask( x ) );
 		}
 
 		private void Grid_MouseDown( object sender, MouseButtonEventArgs e )
@@ -73,26 +63,16 @@ namespace ScreenMask
 		}
 
 		private void BringAlltoTop_Click( object sender, RoutedEventArgs e )
-		{
-			foreach ( Window W in Application.Current.Windows )
-				if ( W is Mask M )
-					M.Activate();
-		}
+			=> Application.Current.Windows.CastOnly<Mask>().Do( x => x.Activate() );
 
 		private void RemoveAll_Click( object sender, RoutedEventArgs e )
-		{
-			foreach ( Window W in Application.Current.Windows )
-				if ( W is Mask M )
-					M.Close();
-		}
+			=> Application.Current.Windows.CastOnly<Mask>().Do( x => x.Close() );
 
 		private void ClippingMode_Click( object sender, RoutedEventArgs e )
 		{
 			Close();
 
-			foreach ( Window W in Application.Current.Windows )
-				if ( W is Mask M )
-					M.Close();
+			Application.Current.Windows.CastOnly<Mask>().Do( x => x.Close() );
 
 			ModeClipping CMask = new ModeClipping();
 			CMask.Show();

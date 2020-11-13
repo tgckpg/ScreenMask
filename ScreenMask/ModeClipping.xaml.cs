@@ -1,6 +1,7 @@
 ﻿using ScreenMask.Config;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,17 +35,10 @@ namespace ScreenMask
 
 		protected override void SaveSettings()
 		{
-			List<MaskDef> MaskDefs = new List<MaskDef>();
-
-			foreach ( RectangleGeometry RectG in Masks.Children )
-			{
-				if ( RectG == BackgroundRect )
-					continue;
-
-				MaskDefs.Add( new MaskDef() { Rect = RectG.Rect } );
-			}
-
-			AppConfig.Current.Masks = MaskDefs;
+			AppConfig.Current.Masks = Masks.Children
+				.CastOnly<RectangleGeometry>().Skip( 1 )
+				.Select( x => new MaskDef() { Rect = x.Rect } );
+;
 			AppConfig.Current.AlwaysOnTop = Topmost;
 			AppConfig.Current.Save();
 		}
@@ -81,18 +75,23 @@ namespace ScreenMask
 			{
 				EditMode.Visibility = Visibility.Collapsed;
 				EditMode.Children.Clear();
+
+				KeyDown -= ModeClipping_KeyDown;
 			}
 			else
 			{
 				EditMode.Visibility = Visibility.Visible;
-				foreach ( RectangleGeometry RectG in Masks.Children )
-				{
-					if ( RectG == BackgroundRect )
-						continue;
+				Masks.Children.CastOnly<RectangleGeometry>().Skip( 1 )
+					.Do( x => ClippingMode.EditModeSetup.CreateSelectionRect( EditMode, x.Rect, R => x.Rect = R ) );
 
-					ClippingMode.EditModeSetup.CreateSelectionRect( EditMode, RectG.Rect, R => RectG.Rect = R );
-				}
+				KeyDown += ModeClipping_KeyDown;
 			}
+		}
+
+		private void ModeClipping_KeyDown( object sender, KeyEventArgs e )
+		{
+			IInputElement Elem = FocusManager.GetFocusedElement( EditMode );
+			Elem.RaiseEvent( e );
 		}
 
 		private void Color_Click( object sender, RoutedEventArgs e )
