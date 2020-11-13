@@ -25,6 +25,11 @@ namespace ScreenMask
 		{
 			RectangleGeometry RectG = new RectangleGeometry( Def.Rect );
 			Masks.Children.Add( RectG );
+
+			if ( EditMode.Visibility == Visibility.Visible )
+			{
+				ClippingMode.EditModeSetup.CreateSelectionRect( EditMode, RectG.Rect, R => RectG.Rect = R );
+			}
 		}
 
 		protected override void SaveSettings()

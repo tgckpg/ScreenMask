@@ -24,45 +24,42 @@ namespace ScreenMask.ClippingMode
 			};
 
 			Grid Corners = new Grid();
-			Corners.Width = B.Width + 10;
-			Corners.Height = B.Height + 10;
 
-			Border CornerTL = new Border();
+			Border CornerTL = new Border() { Name = "CornerTL" };
 			CornerTL.Width = CornerTL.Height = 15;
 			CornerTL.VerticalAlignment = VerticalAlignment.Top;
 			CornerTL.HorizontalAlignment = HorizontalAlignment.Left;
 			CornerTL.BorderThickness = new Thickness( 5, 5, 0, 0 );
-			CornerTL.BorderBrush = new SolidColorBrush() { Color = Color.FromArgb( 120, 255, 255, 255 ) };
+			CornerTL.BorderBrush = new SolidColorBrush() { Color = Color.FromArgb( 20, 255, 255, 255 ) };
 
-			Border CornerTR = new Border();
+			Border CornerTR = new Border() { Name = "CornerTR" };
 			CornerTR.Width = CornerTR.Height = 15;
 			CornerTR.VerticalAlignment = VerticalAlignment.Top;
 			CornerTR.HorizontalAlignment = HorizontalAlignment.Right;
 			CornerTR.BorderThickness = new Thickness( 0, 5, 5, 0 );
-			CornerTR.BorderBrush = new SolidColorBrush() { Color = Color.FromArgb( 120, 255, 255, 255 ) };
+			CornerTR.BorderBrush = new SolidColorBrush() { Color = Color.FromArgb( 20, 255, 255, 255 ) };
 
-			Border CornerBR = new Border();
+			Border CornerBR = new Border() { Name = "CornerBR" };
 			CornerBR.Width = CornerBR.Height = 15;
 			CornerBR.VerticalAlignment = VerticalAlignment.Bottom;
 			CornerBR.HorizontalAlignment = HorizontalAlignment.Right;
 			CornerBR.BorderThickness = new Thickness( 0, 0, 5, 5 );
-			CornerBR.BorderBrush = new SolidColorBrush() { Color = Color.FromArgb( 120, 255, 255, 255 ) };
+			CornerBR.BorderBrush = new SolidColorBrush() { Color = Color.FromArgb( 20, 255, 255, 255 ) };
 
-			Border CornerBL = new Border();
+			Border CornerBL = new Border() { Name = "CornerBL" };
 			CornerBL.Width = CornerBL.Height = 15;
 			CornerBL.VerticalAlignment = VerticalAlignment.Bottom;
 			CornerBL.HorizontalAlignment = HorizontalAlignment.Left;
 			CornerBL.BorderThickness = new Thickness( 5, 0, 0, 5 );
-			CornerBL.BorderBrush = new SolidColorBrush() { Color = Color.FromArgb( 120, 255, 255, 255 ) };
+			CornerBL.BorderBrush = new SolidColorBrush() { Color = Color.FromArgb( 20, 255, 255, 255 ) };
 
 			Border HoverShade = new Border
 			{
+				Name = "HoverShade",
 				Background = HoverShadeBrush,
-				Width = B.Width,
-				Height = B.Height
+				Child = Dim
 			};
 
-			HoverShade.Child = Dim;
 			Corners.Children.Add( CornerTL );
 			Corners.Children.Add( CornerTR );
 			Corners.Children.Add( CornerBR );
@@ -78,19 +75,14 @@ namespace ScreenMask.ClippingMode
 
 				Canvas.SetTop( HoverShade, Y1 );
 				Canvas.SetLeft( HoverShade, X1 );
-				Canvas.SetTop( Corners, Y1 - 5 );
-				Canvas.SetLeft( Corners, X1 - 5 );
+				Canvas.SetTop( Corners, Y1 - 8 );
+				Canvas.SetLeft( Corners, X1 - 8 );
 
 				Dim.Text = $"X: {B.X.AsDecimalPlaces( 2 )} Y: {B.Y.AsDecimalPlaces( 2 )} W: {B.Width.AsDecimalPlaces( 2 )} H: {B.Height.AsDecimalPlaces( 2 )}";
 			}
 
-			UpdateDisplay();
-
-			HoverShade.MouseEnter += ( s, e ) =>
-				HoverShadeBrush.Color = Color.FromArgb( 120, 0, 0, 0 );
-
-			HoverShade.MouseLeave += ( s, e ) =>
-				HoverShadeBrush.Color = Color.FromArgb( 1, 0, 0, 0 );
+			HoverShade.MouseEnter += ( s, e ) => HoverShadeBrush.Color = Color.FromArgb( 120, 0, 0, 0 );
+			HoverShade.MouseLeave += ( s, e ) => HoverShadeBrush.Color = Color.FromArgb( 1, 0, 0, 0 );
 
 			BindMouseDragHandlers( Stage, HoverShade, d =>
 			{
@@ -103,38 +95,48 @@ namespace ScreenMask.ClippingMode
 			{
 				ChangeCallback( B );
 
-				Corners.Width = B.Width + 10;
-				Corners.Height = B.Height + 10;
+				Corners.Width = B.Width + 16;
+				Corners.Height = B.Height + 16;
 				HoverShade.Width = B.Width;
 				HoverShade.Height = B.Height;
 				UpdateDisplay();
 			}
 
-			BindMouseDragHandlers( Stage, CornerTL, d =>
+			CornerTailOps();
+
+			void BindCorner( Border Corner, Action<System.Windows.Vector> HandleStack )
+			{
+				Corner.MouseEnter += ( s, e ) => ( ( SolidColorBrush ) Corner.BorderBrush ).Color = Colors.White;
+				Corner.MouseLeave += ( s, e ) => ( ( SolidColorBrush ) Corner.BorderBrush ).Color = Color.FromArgb( 20, 255, 255, 255 );
+
+				BindMouseDragHandlers( Stage, Corner, d =>
+				{
+					HandleStack( d );
+					CornerTailOps();
+				} );
+			}
+
+			BindCorner( CornerTL, d =>
 			{
 				B.X += d.X; B.Y += d.Y;
 				B.Width -= d.X; B.Height -= d.Y;
-				CornerTailOps();
 			} );
 
-			BindMouseDragHandlers( Stage, CornerTR, d =>
+			BindCorner( CornerTR, d =>
 			{
 				B.Y += d.Y;
 				B.Width += d.X; B.Height -= d.Y;
-				CornerTailOps();
 			} );
 
-			BindMouseDragHandlers( Stage, CornerBL, d =>
+			BindCorner( CornerBL, d =>
 			{
 				B.X += d.X;
 				B.Width -= d.X; B.Height += d.Y;
-				CornerTailOps();
 			} );
 
-			BindMouseDragHandlers( Stage, CornerBR, d =>
+			BindCorner( CornerBR, d =>
 			{
 				B.Width += d.X; B.Height += d.Y;
-				CornerTailOps();
 			} );
 		}
 
@@ -158,8 +160,31 @@ namespace ScreenMask.ClippingMode
 				}
 			}
 
+			Elem.Focusable = true;
+
+			Elem.KeyDown += ( s, e ) =>
+			{
+				switch ( e.Key )
+				{
+					case Key.Up:
+						HandleStack( new System.Windows.Vector( 0, -1 ) );
+						break;
+					case Key.Down:
+						HandleStack( new System.Windows.Vector( 0, 1 ) );
+						break;
+					case Key.Left:
+						HandleStack( new System.Windows.Vector( -1, 0 ) );
+						break;
+					case Key.Right:
+						HandleStack( new System.Windows.Vector( 1, 0 ) );
+						break;
+				}
+			};
+
 			Elem.MouseDown += ( s, e ) =>
 			{
+				Elem.Focus();
+
 				Elem.CaptureMouse();
 				DragStart = e.GetPosition( Stage );
 				Elem.MouseMove += _OnMove;
