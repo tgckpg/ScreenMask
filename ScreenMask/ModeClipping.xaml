@@ -14,7 +14,9 @@
     <Window.Resources>
         <scmsk:ToDecimalConverter x:Key="ToDecimalConverter" />
         <ContextMenu x:Key="MainMenu">
-            <MenuItem Header="New mask" Click="NewMask_Click" />
+            <MenuItem x:Name="DeleteThisMask" Header="Delete this mask" Click="DeleteThisMask_Click" Visibility="Collapsed" />
+            <MenuItem Header="New mask" Tag="ShowOnEditMode" Click="NewMask_Click" Visibility="Collapsed" />
+            <Separator Visibility="Collapsed" Tag="ShowOnEditMode" />
             <MenuItem Header="Edit masks" Click="EditMasks_Click" IsCheckable="True" IsChecked="False" />
             <MenuItem Header="Clipping mode" Click="MaskMode_Click" IsCheckable="True" IsChecked="True" />
             <MenuItem Header="Color" Click="Color_Click" />

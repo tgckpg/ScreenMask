@@ -1,6 +1,7 @@
 ﻿using ScreenMask.Config;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,7 @@ namespace ScreenMask
 
 		private AdjustmentType Adjustment = AdjustmentType.None;
 		private double Step = 0.1;
+		private double d = 0;
 
 		public Mask( MaskDef Def )
 		{
@@ -30,13 +32,10 @@ namespace ScreenMask
 
 			Background = new SolidColorBrush( Color.FromArgb( Def.BgColor[ 0 ], Def.BgColor[ 1 ], Def.BgColor[ 2 ], Def.BgColor[ 3 ] ) );
 
-			foreach ( MenuItem Item in ( ( ContextMenu ) Resources[ "MainMenu" ] ).Items )
-			{
-				if ( Item.Name == "AlwaysOnTop" )
-				{
-					Item.IsChecked = Topmost;
-				}
-			}
+			( ( ContextMenu ) Resources[ "MainMenu" ] ).Items
+				.CastOnly<MenuItem>()
+				.First( x => x.Name == "AlwaysOnTop" )
+				.IsChecked = Topmost;
 		}
 
 		private void WindowLoaded( object sender, RoutedEventArgs args )
@@ -92,6 +91,18 @@ namespace ScreenMask
 				Adjustment = AdjustmentType.None;
 				EditMask.Visibility = Visibility.Collapsed;
 				return;
+			}
+
+			if ( e.IsRepeat )
+			{
+				double t = Step;
+				d = ( t *= 0.5 ) * t * t;
+				Step += 0.075;
+			}
+			else
+			{
+				Step = 0.1;
+				d = 0.1;
 			}
 
 			switch ( Adjustment )
