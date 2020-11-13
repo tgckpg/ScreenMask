@@ -78,8 +78,9 @@ namespace ScreenMask
 
 		private void MaskMode_Click( object sender, RoutedEventArgs e )
 		{
-			Close();
 			ModeMask MMode = new ModeMask();
+			Application.Current.MainWindow = MMode;
+			Close();
 			MMode.Show();
 		}
 

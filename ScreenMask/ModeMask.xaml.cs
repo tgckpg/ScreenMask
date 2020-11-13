@@ -70,14 +70,14 @@ namespace ScreenMask
 
 		private void ClippingMode_Click( object sender, RoutedEventArgs e )
 		{
-			Close();
-
 			Application.Current.Windows.CastOnly<Mask>().Do( x => x.Close() );
 
 			ModeClipping CMask = new ModeClipping();
-			CMask.Show();
-
 			Application.Current.MainWindow = CMask;
+
+			Close();
+
+			CMask.Show();
 		}
 	}
 }
