@@ -12,7 +12,7 @@ namespace ScreenMask.Converters
 		{
 			if ( value is double v )
 			{
-				return decimal.Round( (decimal)v, int.Parse( ( string ) parameter ) );
+				return v.AsDecimalPlaces( int.Parse( ( string ) parameter ) );
 			}
 
 			return value;

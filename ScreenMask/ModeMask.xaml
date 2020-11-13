@@ -1,4 +1,4 @@
-﻿<Window x:Class="ScreenMask.MainWindow"
+﻿<local:MainWindowEx x:Class="ScreenMask.ModeMask"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,6 +12,7 @@
     <Window.Resources>
         <ContextMenu x:Key="MainMenu">
             <MenuItem Header="New mask" Click="NewMask_Click" />
+            <MenuItem Header="Clipping mode" Click="ClippingMode_Click" />
             <MenuItem Header="All masks">
                 <MenuItem Header="Bring to top" Click="BringAlltoTop_Click" />
                 <MenuItem Header="Delete" Click="RemoveAll_Click" />
@@ -27,4 +28,4 @@
                      StrokeThickness="8" Fill="White" />
         </Canvas>
     </Grid>
-</Window>
+</local:MainWindowEx>

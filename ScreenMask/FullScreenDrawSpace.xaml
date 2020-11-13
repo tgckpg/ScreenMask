@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScreenMask"
         mc:Ignorable="d"
-        MouseUp="Window_MouseUp"
+        MouseUp="Window_MouseUp" KeyDown="Window_KeyDown"
         Background="Transparent"
         AllowsTransparency="True"
         WindowState="Maximized" WindowStyle="None"

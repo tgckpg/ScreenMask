@@ -23,12 +23,18 @@ namespace ScreenMask
 			InitializeComponent();
 		}
 
+		public new void Show() => throw new Exception( "Please use ShowDialog" );
+
+		private void WindowLoaded( object sender, RoutedEventArgs args ) => Win32Calls.HideFromAltTab( this );
+
 		private void Window_MouseUp( object sender, MouseButtonEventArgs e )
 		{
-			DefinedArea.X = Canvas.GetLeft( DefiningArea ) - 7;
-			DefinedArea.Y = Canvas.GetTop( DefiningArea ) - 7;
+			DefinedArea.X = Canvas.GetLeft( DefiningArea ) + ( AppVars.W_OFFSET_X + 1 );
+			DefinedArea.Y = Canvas.GetTop( DefiningArea ) + ( AppVars.W_OFFSET_Y + 1 );
 			DefinedArea.Width = DefiningArea.Width;
 			DefinedArea.Height = DefiningArea.Height;
+
+			DialogResult = true;
 			Close();
 		}
 
@@ -65,6 +71,15 @@ namespace ScreenMask
 					DefiningArea.Height = P.Y - StartPoint.Y;
 					Canvas.SetTop( DefiningArea, StartPoint.Y );
 				}
+			}
+		}
+
+		private void Window_KeyDown( object sender, KeyEventArgs e )
+		{
+			if( e.Key == Key.Escape)
+			{
+				DialogResult = false;
+				Close();
 			}
 		}
 	}

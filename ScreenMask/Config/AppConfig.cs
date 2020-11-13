@@ -10,27 +10,55 @@ namespace ScreenMask.Config
 {
 	class AppConfig
 	{
-		private static Configuration Conf;
+		private Configuration Conf;
 
-		public static void Read() => Conf = ConfigurationManager.OpenExeConfiguration( ConfigurationUserLevel.None );
-		public static void Save() => Conf.Save( ConfigurationSaveMode.Modified );
-
-		public static MaskDef[] GetMasks()
-			=> JsonConvert.DeserializeObject<MaskDef[]>( Conf.AppSettings.Settings[ "Masks" ]?.Value ?? "[]" );
-
-		public static Point GetMainWindowPos()
-			=> JsonConvert.DeserializeObject<Point>( Conf.AppSettings.Settings[ "MWPos" ]?.Value ?? "\"0,0\"" );
-
-		public static void SetMasks( IList<MaskDef> Masks )
+		private static AppConfig _Current;
+		public static AppConfig Current => _Current ??= new AppConfig
 		{
-			Conf.AppSettings.Settings.Remove( "Masks" );
-			Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "Masks", JsonConvert.SerializeObject( Masks ) ) );
+			Conf = ConfigurationManager.OpenExeConfiguration( ConfigurationUserLevel.None )
+		};
+
+		public void Save() => Conf.Save( ConfigurationSaveMode.Modified );
+
+		public IList<MaskDef> Masks
+		{
+			get => JsonConvert.DeserializeObject<MaskDef[]>( Conf.AppSettings.Settings[ "Masks" ]?.Value ?? "[]" );
+			set
+			{
+				Conf.AppSettings.Settings.Remove( "Masks" );
+				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "Masks", JsonConvert.SerializeObject( value ) ) );
+			}
 		}
 
-		internal static void SetMainWindowPos( double top, double left )
+		public Point GadgetPos
 		{
-			Conf.AppSettings.Settings.Remove( "MWPos" );
-			Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "MWPos", JsonConvert.SerializeObject( new Point( top, left ) ) ) );
+			get => JsonConvert.DeserializeObject<Point>( Conf.AppSettings.Settings[ "MWPos" ]?.Value ?? "\"0,0\"" );
+			set
+			{
+				Conf.AppSettings.Settings.Remove( "MWPos" );
+				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "MWPos", JsonConvert.SerializeObject( value ) ) );
+			}
 		}
+
+		public string Mode
+		{
+			get => Conf.AppSettings.Settings[ "Mode" ]?.Value ?? "Default";
+			set
+			{
+				Conf.AppSettings.Settings.Remove( "Mode" );
+				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "Mode", value ) );
+			}
+		}
+
+		public bool AlwaysOnTop
+		{
+			get => JsonConvert.DeserializeObject<bool>( Conf.AppSettings.Settings[ "AlwaysOnTop" ]?.Value ?? "false" );
+			set
+			{
+				Conf.AppSettings.Settings.Remove( "AlwaysOnTop" );
+				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "AlwaysOnTop", JsonConvert.SerializeObject( value ) ) );
+			}
+		}
+
 	}
 }

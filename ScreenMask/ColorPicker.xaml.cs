@@ -16,7 +16,6 @@ namespace ScreenMask
 {
 	public partial class ColorPicker : Window
 	{
-		public bool Confirmed { get; private set; }
 		public Color SelectedColor { get; private set; }
 
 		public ColorPicker()
@@ -24,14 +23,19 @@ namespace ScreenMask
 			InitializeComponent();
 		}
 
+		public new void Show() => throw new Exception( "Please use ShowDialog" );
+
+		private void WindowLoaded( object sender, RoutedEventArgs args ) => Win32Calls.HideFromAltTab( this );
+
 		private void OK_Click( object sender, RoutedEventArgs e )
 		{
-			Confirmed = true;
+			DialogResult = true;
 			Close();
 		}
 
 		private void Cancel_Click( object sender, RoutedEventArgs e )
 		{
+			DialogResult = false;
 			Close();
 		}
 

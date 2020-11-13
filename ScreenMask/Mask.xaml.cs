@@ -8,8 +8,6 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ScreenMask
 {
@@ -41,7 +39,7 @@ namespace ScreenMask
 			}
 		}
 
-		void WindowLoaded( object sender, RoutedEventArgs args )
+		private void WindowLoaded( object sender, RoutedEventArgs args )
 		{
 			Win32Calls.HideFromAltTab( this );
 			EditMask.DataContext = this;
@@ -60,9 +58,7 @@ namespace ScreenMask
 		}
 
 		private void ToggleAlwaysTop( object sender, RoutedEventArgs e )
-		{
-			Topmost = ( sender as MenuItem ).IsChecked;
-		}
+			=> Topmost = ( sender as MenuItem ).IsChecked;
 
 		public MaskDef AsDef()
 		{
@@ -159,15 +155,11 @@ namespace ScreenMask
 
 		private void Color_Click( object sender, RoutedEventArgs e )
 		{
-			ColorPicker Picker = new ColorPicker();
-			Picker.Show();
-			Picker.Closed += ( s, e ) =>
+			ColorPicker Picker = new ColorPicker { Owner = this };
+			if ( Picker.ShowDialog() == true )
 			{
-				if ( Picker.Confirmed )
-				{
-					Background = new SolidColorBrush( Picker.SelectedColor );
-				}
-			};
+				Background = new SolidColorBrush( Picker.SelectedColor );
+			}
 		}
 	}
 }

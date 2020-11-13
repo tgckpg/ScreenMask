@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ScreenMask.Config;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -21,8 +22,21 @@ namespace ScreenMask
 			else
 			{
 				Win32Calls.PostMessage( ( IntPtr ) Win32Calls.HWND_BROADCAST, Win32Calls.MSG_SHOW_MYSELF, IntPtr.Zero, IntPtr.Zero );
-				Current.MainWindow.Close();
+				Current.Shutdown();
 			}
+		}
+
+		protected override void OnStartup( StartupEventArgs e )
+		{
+			base.OnStartup( e );
+			Window MainWindow = AppConfig.Current.Mode switch
+			{
+				"Clipping" => new ModeClipping(),
+				_ => new ModeMask(),
+			};
+
+			Current.MainWindow = MainWindow;
+			MainWindow.Show();
 		}
 	}
 }
