@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
+using System.Text.Json;
 using System.Windows;
 
 namespace ScreenMask.Config
@@ -22,21 +21,21 @@ namespace ScreenMask.Config
 
 		public IEnumerable<MaskDef> Masks
 		{
-			get => JsonConvert.DeserializeObject<MaskDef[]>( Conf.AppSettings.Settings[ "Masks" ]?.Value ?? "[]" );
+			get => JsonSerializer.Deserialize<MaskDef[]>( Conf.AppSettings.Settings[ "Masks" ]?.Value ?? "[]" );
 			set
 			{
 				Conf.AppSettings.Settings.Remove( "Masks" );
-				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "Masks", JsonConvert.SerializeObject( value ) ) );
+				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "Masks", JsonSerializer.Serialize( value ) ) );
 			}
 		}
 
 		public Point GadgetPos
 		{
-			get => JsonConvert.DeserializeObject<Point>( Conf.AppSettings.Settings[ "MWPos" ]?.Value ?? "\"0,0\"" );
+			get => JsonSerializer.Deserialize<Point>( Conf.AppSettings.Settings[ "MWPos" ]?.Value ?? "{\"X\":0,\"Y\":0}" );
 			set
 			{
 				Conf.AppSettings.Settings.Remove( "MWPos" );
-				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "MWPos", JsonConvert.SerializeObject( value ) ) );
+				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "MWPos", JsonSerializer.Serialize( value ) ) );
 			}
 		}
 
@@ -52,11 +51,11 @@ namespace ScreenMask.Config
 
 		public bool AlwaysOnTop
 		{
-			get => JsonConvert.DeserializeObject<bool>( Conf.AppSettings.Settings[ "AlwaysOnTop" ]?.Value ?? "false" );
+			get => JsonSerializer.Deserialize<bool>( Conf.AppSettings.Settings[ "AlwaysOnTop" ]?.Value ?? "false" );
 			set
 			{
 				Conf.AppSettings.Settings.Remove( "AlwaysOnTop" );
-				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "AlwaysOnTop", JsonConvert.SerializeObject( value ) ) );
+				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "AlwaysOnTop", JsonSerializer.Serialize( value ) ) );
 			}
 		}
 
