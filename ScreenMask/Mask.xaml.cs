@@ -82,6 +82,28 @@ namespace ScreenMask
 			EditMask.Visibility = Visibility.Visible;
 		}
 
+		private void FitWindow_Click( object sender, RoutedEventArgs e )
+		{
+			FitWindow FitWind = new FitWindow
+			{
+				Owner = this,
+				Top = Top,
+				Left = Left,
+				Width = Width,
+				Height = Height
+			};
+
+			Hide();
+			if ( FitWind.ShowDialog() == true )
+			{
+				Top = FitWind.TargetBounds.Top;
+				Left = FitWind.TargetBounds.Left;
+				Width = FitWind.TargetBounds.Width;
+				Height = FitWind.TargetBounds.Height;
+			}
+			Show();
+		}
+
 		private void DeleteThisMask_Click( object sender, RoutedEventArgs e ) => Close();
 
 		private void Window_KeyDown( object sender, KeyEventArgs e )

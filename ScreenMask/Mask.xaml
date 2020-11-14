@@ -19,11 +19,15 @@
     <Window.Resources>
         <scmsk:ToDecimalConverter x:Key="ToDecimalConverter" />
         <ContextMenu x:Key="MainMenu">
+            <MenuItem Header="Fit a window" Click="FitWindow_Click" />
+            <Separator />
             <MenuItem Header="Move" Click="Move_Click" />
             <MenuItem Header="Resize" Click="Resize_Click" />
             <MenuItem Header="Color" Click="Color_Click" />
-            <MenuItem Header="Delete this mask" Click="DeleteThisMask_Click" />
+            <Separator />
             <MenuItem x:Name="AlwaysOnTop" Header="Always on top" Click="ToggleAlwaysTop" IsChecked="True" IsCheckable="True" />
+            <Separator />
+            <MenuItem Header="Delete this mask" Click="DeleteThisMask_Click" />
         </ContextMenu>
     </Window.Resources>
     <Border x:Name="EditMask" Background="#11FFFFFF" Visibility="Collapsed">

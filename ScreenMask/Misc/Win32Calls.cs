@@ -53,7 +53,7 @@ namespace ScreenMask
 			U32Rect R = new U32Rect();
 			Win32Calls.GetWindowRect( P.MainWindowHandle, ref R );
 
-			return new Rect() { X = R.Left, Y = R.Top, Width = R.Right - R.Left, Height = R.Bottom - R.Top };
+			return new Rect( new System.Windows.Point( R.Left, R.Top ), new System.Windows.Point( R.Right, R.Bottom ) );
 		}
 	}
 

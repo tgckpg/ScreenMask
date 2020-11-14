@@ -10,7 +10,7 @@
         WindowState="Maximized"
         Loaded="WindowLoaded"
         mc:Ignorable="d"
-        Title="ClippingMask">
+        Title="Screen Mask [Clipping]">
     <Window.Resources>
         <scmsk:ToDecimalConverter x:Key="ToDecimalConverter" />
         <ContextMenu x:Key="MainMenu">

@@ -16,25 +16,65 @@ namespace ScreenMask
 {
 	public partial class SelectProcess : Window
 	{
-		public Process SelectedProcess { get; set; }
+		public Action<Rect> SelectedCallback { get; set; }
+
+		private MaskableProcess Selected;
+
 		public SelectProcess()
 		{
 			InitializeComponent();
 		}
 
+		public new void Show() => throw new Exception( "Please use ShowDialog" );
+
 		private void Window_Loaded( object sender, RoutedEventArgs e )
 		{
-			ProcList.ItemsSource = Process.GetProcesses().Where( x =>
-			{
-				Rect R = x.GetWindowRect();
-				return 0 < R.Width && 0 < R.Height;
-			} ).OrderBy( x => x.ProcessName );
+			Win32Calls.HideFromAltTab( this );
+			RefreshProcessList();
 		}
+
+		private void Button_Click( object sender, RoutedEventArgs e ) => RefreshProcessList();
+
+		private void RefreshProcessList()
+			=> ProcList.ItemsSource = Process.GetProcesses()
+				.Select( x => new MaskableProcess( x ) )
+				.Where( x => x.HasMainWindow )
+				.OrderBy( x => x.ProcessName );
 
 		private void ProcList_SelectionChanged( object sender, SelectionChangedEventArgs e )
 		{
-			SelectedProcess = ( Process ) e.AddedItems[ 0 ];
-			Close();
+			Selected = e.AddedItems.CastOnly<MaskableProcess>().FirstOrDefault();
+			UpdateBounds();
 		}
+
+		private void UpdateBounds()
+		{
+			if ( Selected?.CanFit != true )
+				return;
+			Rect B = Selected.Bounds;
+
+			_ = int.TryParse( OffsetIX.Text, out int _X );
+			_ = int.TryParse( OffsetIY.Text, out int _Y );
+			_ = int.TryParse( OffsetIW.Text, out int _W );
+			_ = int.TryParse( OffsetIH.Text, out int _H );
+
+			B.X += _X;
+			B.Y += _Y;
+			B.Width += _W;
+			B.Height += _H;
+			SelectedCallback?.Invoke( B );
+		}
+
+		private void ProcList_MouseDoubleClick( object sender, MouseButtonEventArgs e )
+		{
+			if ( Selected?.CanFit == true )
+			{
+				DialogResult = true;
+			}
+		}
+
+		private void Offsets_TextChanged( object sender, TextChangedEventArgs e )
+			=> UpdateBounds();
+
 	}
 }

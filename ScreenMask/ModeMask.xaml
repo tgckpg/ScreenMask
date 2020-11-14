@@ -8,7 +8,7 @@
         AllowsTransparency="True" WindowStyle="None"
         Loaded="Window_Loaded"
         Background="#22000662"
-        Title="MainWindow" Height="100" Width="100">
+        Title="Screen Mask [Normal]" Height="100" Width="100">
     <Window.Resources>
         <ContextMenu x:Key="MainMenu">
             <MenuItem Header="New mask" Click="NewMask_Click" />
