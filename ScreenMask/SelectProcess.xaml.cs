@@ -58,10 +58,15 @@ namespace ScreenMask
 			_ = int.TryParse( OffsetIW.Text, out int _W );
 			_ = int.TryParse( OffsetIH.Text, out int _H );
 
+			Point P = this.GetDpiScale();
 			B.X += _X;
 			B.Y += _Y;
 			B.Width += _W;
 			B.Height += _H;
+			B.X /= P.X;
+			B.Y /= P.Y;
+			B.Width /= P.X;
+			B.Height /= P.Y;
 			SelectedCallback?.Invoke( B );
 		}
 

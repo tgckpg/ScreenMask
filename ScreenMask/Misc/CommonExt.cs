@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
+using System.Windows;
+using System.Windows.Media;
 
 namespace ScreenMask
 {
@@ -20,6 +23,17 @@ namespace ScreenMask
 		{
 			foreach ( T x in Source )
 				Callback( x );
+		}
+
+
+		public static System.Windows.Point GetDpiScale( this Visual V )
+		{
+			PresentationSource source = PresentationSource.FromVisual( V );
+
+			return new System.Windows.Point(
+				source.CompositionTarget.TransformToDevice.M11,
+				source.CompositionTarget.TransformToDevice.M22
+			);
 		}
 	}
 }
