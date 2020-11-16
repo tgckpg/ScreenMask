@@ -37,6 +37,7 @@ namespace ScreenMask
 
 		protected override void SaveSettings()
 		{
+			base.SaveSettings();
 			AppConfig.Current.Masks = Masks.Children
 				.CastOnly<RectangleGeometry>().Skip( 1 )
 				.Select( x => new MaskDef() { Rect = x.Rect } );

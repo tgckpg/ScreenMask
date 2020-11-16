@@ -32,6 +32,7 @@ namespace ScreenMask
 
 		protected override void SaveSettings()
 		{
+			base.SaveSettings();
 			AppConfig.Current.Masks = Application.Current.Windows.CastOnly<Mask>().Select( x => x.AsDef() );
 			AppConfig.Current.GadgetPos = new Point( Top, Left );
 			AppConfig.Current.Save();
@@ -53,8 +54,6 @@ namespace ScreenMask
 				this.DragMove();
 			}
 		}
-
-		private void Grid_MouseUp( object sender, MouseButtonEventArgs e ) => SaveSettings();
 
 		private void Grid_MouseRightButtonUp( object sender, MouseButtonEventArgs e )
 		{

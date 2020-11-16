@@ -59,5 +59,22 @@ namespace ScreenMask.Config
 			}
 		}
 
+		public IEnumerable<ProcessProfile> ProcessProfiles
+		{
+			get
+			{
+				JsonSerializerOptions Options = new JsonSerializerOptions();
+				Options.Converters.Add( new Converters.JsonVector4Converter() );
+				return JsonSerializer.Deserialize<ProcessProfile[]>( Conf.AppSettings.Settings[ "ProcessProfiles" ]?.Value ?? "[]", Options );
+			}
+			set
+			{
+				Conf.AppSettings.Settings.Remove( "ProcessProfiles" );
+				JsonSerializerOptions Options = new JsonSerializerOptions();
+				Options.Converters.Add( new Converters.JsonVector4Converter() );
+				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "ProcessProfiles", JsonSerializer.Serialize( value, Options ) ) );
+			}
+		}
+
 	}
 }

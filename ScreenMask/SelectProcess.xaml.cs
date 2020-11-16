@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ScreenMask.Config;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +21,10 @@ namespace ScreenMask
 		public Action<Rect> SelectedCallback { get; set; }
 
 		private ProcessWindowInfo Selected;
+
+		private WindowProfile Profile => ProfileData
+				.ProcessProfiles.GetOrCreate( Selected.Process.GetBinId() )
+				.WindowProfiles.GetOrCreate( Selected.Title );
 
 		public SelectProcess()
 		{
@@ -47,6 +53,10 @@ namespace ScreenMask
 		private void ProcList_SelectionChanged( object sender, SelectionChangedEventArgs e )
 		{
 			Selected = e.AddedItems.CastOnly<ProcessWindowInfo>().FirstOrDefault();
+			OffsetIX.Text = Profile.Offsets.X.ToString();
+			OffsetIY.Text = Profile.Offsets.Y.ToString();
+			OffsetIW.Text = Profile.Offsets.W.ToString();
+			OffsetIH.Text = Profile.Offsets.Z.ToString();
 			UpdateBounds();
 		}
 
@@ -57,10 +67,12 @@ namespace ScreenMask
 
 			Rect B = Selected.Bound;
 
-			_ = int.TryParse( OffsetIX.Text, out int _X );
-			_ = int.TryParse( OffsetIY.Text, out int _Y );
-			_ = int.TryParse( OffsetIW.Text, out int _W );
-			_ = int.TryParse( OffsetIH.Text, out int _H );
+			_ = float.TryParse( OffsetIX.Text, out float _X );
+			_ = float.TryParse( OffsetIY.Text, out float _Y );
+			_ = float.TryParse( OffsetIW.Text, out float _W );
+			_ = float.TryParse( OffsetIH.Text, out float _H );
+
+			Profile.Offsets = new Vector4( _X, _Y, _H, _W );
 
 			Point P = this.GetDpiScale();
 			B.X += _X;

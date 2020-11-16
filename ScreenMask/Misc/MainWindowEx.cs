@@ -9,8 +9,12 @@ namespace ScreenMask
 {
 	public abstract class MainWindowEx : Window
 	{
-		protected abstract void SaveSettings();
 		protected abstract void CreateMask( MaskDef Def );
+
+		protected virtual void SaveSettings()
+		{
+			AppConfig.Current.ProcessProfiles = ProfileData.ProcessProfiles;
+		}
 
 		protected override void OnSourceInitialized( EventArgs e )
 		{
