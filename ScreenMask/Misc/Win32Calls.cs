@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -44,16 +45,112 @@ namespace ScreenMask
 
 		[DllImport( "user32.dll" )]
 		public static extern bool GetWindowRect( IntPtr hwnd, ref U32Rect rectangle );
+
+
+		/**
+		 * See: https://stackoverflow.com/a/22440420/1510539
+		 */
+		[DllImport( "user32.dll" )]
+		public static extern uint GetWindowThreadProcessId( IntPtr hWnd, out uint lpdwProcessId );
+
+		[DllImport( "user32.Dll" )]
+		[return: MarshalAs( UnmanagedType.Bool )]
+		public static extern bool EnumChildWindows( IntPtr parentHandle, Win32Callback callback, IntPtr lParam );
+
+		public delegate bool Win32Callback( IntPtr hwnd, IntPtr lParam );
+
+		/**
+		 * See: https://stackoverflow.com/a/17890354/1510539
+		 */
+		[DllImport( "user32.dll", CharSet = CharSet.Auto, SetLastError = true )]
+		public static extern IntPtr SendMessageTimeout( IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam, uint fuFlags, uint uTimeout, out IntPtr lpdwResult );
 	}
 
 	public static class Win32CallsExt
 	{
-		public static Rect GetWindowRect( this Process P )
+		public static Icon GetIcon( this Process P )
+		{
+			try
+			{
+				return Icon.ExtractAssociatedIcon( P.MainModule.FileName );
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		public static IEnumerable<(Process, IEnumerable<(string, Rect)>)> GetWindowRects( this IEnumerable<Process> Ps )
+		{
+			List<IntPtr> rootWindows = GetChildWindows( IntPtr.Zero );
+
+			Dictionary<uint, List<(string, Rect)>> PIDRects = new Dictionary<uint, List<(string, Rect)>>();
+
+			foreach ( IntPtr hWnd in rootWindows )
+			{
+				_ = Win32Calls.GetWindowThreadProcessId( hWnd, out uint lpdwProcessId );
+				if ( !PIDRects.TryGetValue( lpdwProcessId, out List<(string, Rect)> Rects ) )
+					PIDRects[ lpdwProcessId ] = Rects = new List<(string, Rect)>();
+
+				Rects.Add( (GetWindowTitle( hWnd ), GetWindowRect( hWnd )) );
+			}
+
+			return Ps.Select( x =>
+			{
+				if ( PIDRects.TryGetValue( ( uint ) x.Id, out List<(string, Rect)> Rects ) )
+					return (x, Rects.AsEnumerable());
+				return (x, Array.Empty<(string, Rect)>());
+			} );
+		}
+
+		private static Rect GetWindowRect(IntPtr Ptr )
 		{
 			U32Rect R = new U32Rect();
-			Win32Calls.GetWindowRect( P.MainWindowHandle, ref R );
+			_ = Win32Calls.GetWindowRect( Ptr, ref R );
 
 			return new Rect( new System.Windows.Point( R.Left, R.Top ), new System.Windows.Point( R.Right, R.Bottom ) );
+		}
+
+		private static string GetWindowTitle( IntPtr hWnd )
+		{
+			const uint SMTO_ABORTIFHUNG = 0x0002;
+			const uint WM_GETTEXT = 0xD;
+			const int MAX_STRING_SIZE = 32768;
+			IntPtr memoryHandle = Marshal.AllocCoTaskMem( MAX_STRING_SIZE );
+			Marshal.Copy( new char[] { '\0' }, 0, memoryHandle, 1 );
+			_ = Win32Calls.SendMessageTimeout( hWnd, WM_GETTEXT, ( IntPtr ) MAX_STRING_SIZE, memoryHandle, SMTO_ABORTIFHUNG, 1000, out _ );
+			string Title = Marshal.PtrToStringAuto( memoryHandle );
+			Marshal.FreeCoTaskMem( memoryHandle );
+			return Title;
+		}
+
+		public static List<IntPtr> GetChildWindows( IntPtr parent )
+		{
+			List<IntPtr> result = new List<IntPtr>();
+			GCHandle listHandle = GCHandle.Alloc( result );
+			try
+			{
+				Win32Calls.Win32Callback childProc = new Win32Calls.Win32Callback( EnumWindow );
+				Win32Calls.EnumChildWindows( parent, childProc, GCHandle.ToIntPtr( listHandle ) );
+			}
+			finally
+			{
+				if ( listHandle.IsAllocated )
+					listHandle.Free();
+			}
+			return result;
+		}
+
+		private static bool EnumWindow( IntPtr handle, IntPtr pointer )
+		{
+			GCHandle gch = GCHandle.FromIntPtr( pointer );
+			List<IntPtr> list = gch.Target as List<IntPtr>;
+			if ( list == null )
+			{
+				throw new InvalidCastException( "GCHandle Target could not be cast as List<IntPtr>" );
+			}
+			list.Add( handle );
+			return true;
 		}
 	}
 

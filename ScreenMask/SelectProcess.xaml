@@ -4,9 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScreenMask"
+        xmlns:scmsk="clr-namespace:ScreenMask.Converters"
         Loaded="Window_Loaded"
         mc:Ignorable="d"
         Title="SelectProcess" Height="450" Width="800">
+    <Window.Resources>
+        <scmsk:StringVisConverter x:Key="StringVisConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />
@@ -40,11 +44,24 @@
                 <DataTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="45"/>
                             <ColumnDefinition Width="150"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding ProcessName, Mode=OneTime}" />
-                        <TextBlock Grid.Column="1" Text="{Binding Remarks, Mode=OneTime}" />
+                        <Image Grid.Column="0" Width="32" Height="32"
+                               VerticalAlignment="Center"
+                               Source="{Binding ProcessIcon, Mode=OneTime}" />
+                        <TextBlock Grid.Column="1" Margin="0,0,5,0"
+                                   TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                                   Text="{Binding Process.ProcessName, Mode=OneTime}" ToolTip="{Binding Process.ProcessName, Mode=OneTime}" />
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                            <TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                                       Text="{Binding Title, Mode=OneTime}" ToolTip="{Binding Title, Mode=OneTime}" />
+                            <TextBlock Foreground="Gray"
+                                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                                       Visibility="{Binding Remarks, Converter={StaticResource StringVisConverter}}"
+                                       Text="{Binding Remarks, Mode=OneTime}" />
+                       </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

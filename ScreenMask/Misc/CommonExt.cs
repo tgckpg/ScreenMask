@@ -25,7 +25,6 @@ namespace ScreenMask
 				Callback( x );
 		}
 
-
 		public static System.Windows.Point GetDpiScale( this Visual V )
 		{
 			PresentationSource source = PresentationSource.FromVisual( V );

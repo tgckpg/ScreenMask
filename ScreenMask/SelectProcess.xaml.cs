@@ -18,7 +18,7 @@ namespace ScreenMask
 	{
 		public Action<Rect> SelectedCallback { get; set; }
 
-		private MaskableProcess Selected;
+		private ProcessWindowInfo Selected;
 
 		public SelectProcess()
 		{
@@ -37,13 +37,16 @@ namespace ScreenMask
 
 		private void RefreshProcessList()
 			=> ProcList.ItemsSource = Process.GetProcesses()
-				.Select( x => new MaskableProcess( x ) )
-				.Where( x => x.HasMainWindow )
-				.OrderBy( x => x.ProcessName );
+				.GetWindowRects()
+				.SelectMany( x => x.Item2, ( Ps, WRs ) => (Ps.Item1, WRs.Item1, WRs.Item2) )
+				.Select( x => new ProcessWindowInfo( x.Item1, x.Item2, x.Item3 ) )
+				.Where( x => x.HasBound && !string.IsNullOrEmpty( x.Title ) )
+				.OrderBy( x => x.Process.ProcessName.ToUpper() )
+				.ThenByDescending( x => x.Title );
 
 		private void ProcList_SelectionChanged( object sender, SelectionChangedEventArgs e )
 		{
-			Selected = e.AddedItems.CastOnly<MaskableProcess>().FirstOrDefault();
+			Selected = e.AddedItems.CastOnly<ProcessWindowInfo>().FirstOrDefault();
 			UpdateBounds();
 		}
 
@@ -51,7 +54,8 @@ namespace ScreenMask
 		{
 			if ( Selected?.CanFit != true )
 				return;
-			Rect B = Selected.Bounds;
+
+			Rect B = Selected.Bound;
 
 			_ = int.TryParse( OffsetIX.Text, out int _X );
 			_ = int.TryParse( OffsetIY.Text, out int _Y );
