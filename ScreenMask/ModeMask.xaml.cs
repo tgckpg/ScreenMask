@@ -45,6 +45,8 @@ namespace ScreenMask
 			Left = P.Y;
 
 			AppConfig.Current.Masks.Do( x => CreateMask( x ) );
+
+			VisualStateManager.GoToElementState( OuterRect, "Idle", false );
 		}
 
 		private void Grid_MouseDown( object sender, MouseButtonEventArgs e )

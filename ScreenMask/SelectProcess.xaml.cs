@@ -53,11 +53,18 @@ namespace ScreenMask
 		private void ProcList_SelectionChanged( object sender, SelectionChangedEventArgs e )
 		{
 			Selected = e.AddedItems.CastOnly<ProcessWindowInfo>().FirstOrDefault();
-			OffsetIX.Text = Profile.Offsets.X.ToString();
-			OffsetIY.Text = Profile.Offsets.Y.ToString();
-			OffsetIW.Text = Profile.Offsets.W.ToString();
-			OffsetIH.Text = Profile.Offsets.Z.ToString();
-			UpdateBounds();
+			if ( Selected == null )
+			{
+				OffsetIX.Text = OffsetIY.Text = OffsetIW.Text = OffsetIH.Text = "0";
+			}
+			else
+			{
+				OffsetIX.Text = Profile.Offsets.X.ToString();
+				OffsetIY.Text = Profile.Offsets.Y.ToString();
+				OffsetIW.Text = Profile.Offsets.W.ToString();
+				OffsetIH.Text = Profile.Offsets.Z.ToString();
+				UpdateBounds();
+			}
 		}
 
 		private void UpdateBounds()
