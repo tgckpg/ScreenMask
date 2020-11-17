@@ -71,6 +71,7 @@ namespace ScreenMask
 
 		private void ClippingMode_Click( object sender, RoutedEventArgs e )
 		{
+			SaveSettings();
 			Application.Current.Windows.CastOnly<Mask>().Do( x => x.Close() );
 
 			ModeClipping CMask = new ModeClipping();

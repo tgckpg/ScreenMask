@@ -21,6 +21,7 @@ namespace ScreenMask
 		public Action<Rect> SelectedCallback { get; set; }
 
 		private ProcessWindowInfo Selected;
+		private volatile bool SuppressTextChanged = false;
 
 		private WindowProfile Profile => ProfileData
 				.ProcessProfiles.GetOrCreate( Selected.Process.GetBinId() )
@@ -59,10 +60,13 @@ namespace ScreenMask
 			}
 			else
 			{
+				SuppressTextChanged = true;
 				OffsetIX.Text = Profile.Offsets.X.ToString();
 				OffsetIY.Text = Profile.Offsets.Y.ToString();
-				OffsetIW.Text = Profile.Offsets.W.ToString();
 				OffsetIH.Text = Profile.Offsets.Z.ToString();
+				OffsetIW.Text = Profile.Offsets.W.ToString();
+				SuppressTextChanged = false;
+
 				UpdateBounds();
 			}
 		}
@@ -76,8 +80,14 @@ namespace ScreenMask
 
 			_ = float.TryParse( OffsetIX.Text, out float _X );
 			_ = float.TryParse( OffsetIY.Text, out float _Y );
-			_ = float.TryParse( OffsetIW.Text, out float _W );
 			_ = float.TryParse( OffsetIH.Text, out float _H );
+			_ = float.TryParse( OffsetIW.Text, out float _W );
+
+			if ( ( B.Height + _H ) < 0 )
+				_H = 0;
+
+			if ( ( B.Width + _W ) < 0 )
+				_W = 0;
 
 			Profile.Offsets = new Vector4( _X, _Y, _H, _W );
 
@@ -102,7 +112,11 @@ namespace ScreenMask
 		}
 
 		private void Offsets_TextChanged( object sender, TextChangedEventArgs e )
-			=> UpdateBounds();
+		{
+			if ( SuppressTextChanged )
+				return;
+			UpdateBounds();
+		}
 
 	}
 }

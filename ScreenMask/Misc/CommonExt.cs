@@ -39,14 +39,24 @@ namespace ScreenMask
 			);
 		}
 
-		public static string GetBinId(this Process P)
+		public static string GetBinId( this Process P )
 		{
-			string B = P.MainModule.FileName;
+			string B;
+
+			try
+			{
+				B = P.MainModule.FileName;
+			}
+			catch
+			{
+				return $"ACCESS_IS_DENIED-{P.ProcessName}";
+			}
+
 			using ( SHA256 Hasher = SHA256.Create() )
 			using ( Stream s = File.OpenRead( P.MainModule.FileName ) )
 			{
 				byte[] Buffer = new byte[ 4096 ];
-				if( 0 < s.Read( Buffer, 0, 4096 ) )
+				if ( 0 < s.Read( Buffer, 0, 4096 ) )
 				{
 					byte[] Hash = Hasher.ComputeHash( Buffer );
 					B = string.Concat( Hash.Select( x => $"{x:X2}" ) );
