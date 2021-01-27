@@ -19,6 +19,7 @@ namespace ScreenMask
 		private AdjustmentType Adjustment = AdjustmentType.None;
 		private double Step = 0.1;
 		private double d = 0;
+		private string ProfileId = null;
 
 		public Mask( MaskDef Def )
 		{
@@ -29,6 +30,7 @@ namespace ScreenMask
 			Width = Def.Rect.Width;
 			Height = Def.Rect.Height;
 			Topmost = Def.AlwaysOnTop;
+			ProfileId = Def.ProfileId;
 
 			Background = new SolidColorBrush( Color.FromArgb( Def.BgColor[ 0 ], Def.BgColor[ 1 ], Def.BgColor[ 2 ], Def.BgColor[ 3 ] ) );
 
@@ -66,6 +68,7 @@ namespace ScreenMask
 			{
 				Rect = new Rect( Left, Top, Width, Height ),
 				AlwaysOnTop = Topmost,
+				ProfileId = ProfileId,
 				BgColor = new byte[] { BgColor.A, BgColor.R, BgColor.G, BgColor.B }
 			};
 		}
@@ -100,6 +103,7 @@ namespace ScreenMask
 				Left = FitWind.TargetBounds.Left;
 				Width = FitWind.TargetBounds.Width;
 				Height = FitWind.TargetBounds.Height;
+				ProfileId = FitWind.ProfileId;
 			}
 			Show();
 		}

@@ -18,7 +18,7 @@ namespace ScreenMask
 {
 	public partial class SelectProcess : Window
 	{
-		public Action<Rect> SelectedCallback { get; set; }
+		public Action<string, string, Rect> SelectedCallback { get; set; }
 
 		private ProcessWindowInfo Selected;
 		private volatile bool SuppressTextChanged = false;
@@ -40,7 +40,7 @@ namespace ScreenMask
 			RefreshProcessList();
 		}
 
-		private void Button_Click( object sender, RoutedEventArgs e ) => RefreshProcessList();
+		private void Refresh_Click( object sender, RoutedEventArgs e ) => RefreshProcessList();
 
 		private void RefreshProcessList()
 			=> ProcList.ItemsSource = Process.GetProcesses()
@@ -89,6 +89,7 @@ namespace ScreenMask
 			if ( ( B.Width + _W ) < 0 )
 				_W = 0;
 
+			Profile.Bounds = B;
 			Profile.Offsets = new Vector4( _X, _Y, _H, _W );
 
 			Point P = this.GetDpiScale();
@@ -100,7 +101,7 @@ namespace ScreenMask
 			B.Y /= P.Y;
 			B.Width /= P.X;
 			B.Height /= P.Y;
-			SelectedCallback?.Invoke( B );
+			SelectedCallback?.Invoke( Selected.Process.GetBinId(), Selected.Title, B );
 		}
 
 		private void ProcList_MouseDoubleClick( object sender, MouseButtonEventArgs e )
@@ -118,5 +119,16 @@ namespace ScreenMask
 			UpdateBounds();
 		}
 
+		private void ResetOffset_Click( object sender, RoutedEventArgs e )
+		{
+			SuppressTextChanged = true;
+			OffsetIX.Text
+				= OffsetIY.Text
+				= OffsetIH.Text
+				= OffsetIW.Text
+				= "0";
+			SuppressTextChanged = false;
+			UpdateBounds();
+		}
 	}
 }

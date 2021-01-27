@@ -19,6 +19,7 @@ namespace ScreenMask
 	public partial class FitWindow : Window
 	{
 		public Rect TargetBounds { get; private set; }
+		public string ProfileId { get; private set; }
 		private Storyboard PreviewStory = new Storyboard();
 
 		public FitWindow()
@@ -52,8 +53,10 @@ namespace ScreenMask
 			Close();
 		}
 
-		private void MoveBounds( Rect R )
+		private void MoveBounds( string ProcessId, string WindowId, Rect R )
 		{
+			ProfileId = $"{ProcessId}\n{WindowId}";
+
 			TargetBounds = R;
 			SimpleStory.DoubleAnimation( PreviewStory, this, "Top", this.Top, R.Top, 250, 250 );
 			SimpleStory.DoubleAnimation( PreviewStory, this, "Left", this.Left, R.Left, 250 );

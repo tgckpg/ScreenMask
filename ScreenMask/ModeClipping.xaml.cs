@@ -27,6 +27,7 @@ namespace ScreenMask
 		protected override void CreateMask( MaskDef Def )
 		{
 			RectangleGeometry RectG = new RectangleGeometry( Def.Rect );
+			RectG.SetValue( TagProperty, Def );
 			Masks.Children.Add( RectG );
 
 			if ( EditMode.Visibility == Visibility.Visible )
@@ -37,11 +38,20 @@ namespace ScreenMask
 
 		protected override void SaveSettings()
 		{
-			base.SaveSettings();
+			Point P = this.GetDpiScale();
 			AppConfig.Current.Masks = Masks.Children
 				.CastOnly<RectangleGeometry>().Skip( 1 )
-				.Select( x => new MaskDef() { Rect = x.Rect } );
-;
+				.Select( x =>
+				{
+					MaskDef Def = ( x.GetValue( TagProperty ) as MaskDef ) ?? new MaskDef();
+					Def.Rect = x.Rect;
+
+					StoreProfileOffset( Def.ProfileId, Def.Rect, P );
+					return Def;
+				} );
+
+			base.SaveSettings();
+
 			AppConfig.Current.AlwaysOnTop = Topmost;
 			AppConfig.Current.Save();
 		}
@@ -50,11 +60,20 @@ namespace ScreenMask
 		{
 			BackgroundRect.Rect = new Rect( Left, Top, Width, Height );
 			AppConfig.Current.Masks.Do( x => CreateMask( x ) );
+
 			if ( ( Topmost = AppConfig.Current.AlwaysOnTop ) )
 			{
 				( ( ContextMenu ) Resources[ "MainMenu" ] ).Items
 					.CastOnly<MenuItem>().First( x => x.Name == "AlwaysOnTop" )
 					.IsChecked = true;
+			}
+
+			if( AppConfig.Current.PreventSleep )
+			{
+				( ( ContextMenu ) Resources[ "MainMenu" ] ).Items
+					.CastOnly<MenuItem>().First( x => x.Name == "PreventSleep" )
+					.IsChecked = true;
+				SetPreventSleep( true );
 			}
 		}
 

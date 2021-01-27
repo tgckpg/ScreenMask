@@ -32,8 +32,15 @@ namespace ScreenMask
 
 		protected override void SaveSettings()
 		{
+			Point P = this.GetDpiScale();
+			AppConfig.Current.Masks = Application.Current.Windows.CastOnly<Mask>().Select( x => {
+				MaskDef Def = x.AsDef();
+				StoreProfileOffset( Def.ProfileId, Def.Rect, P );
+				return Def;
+			} );
+
 			base.SaveSettings();
-			AppConfig.Current.Masks = Application.Current.Windows.CastOnly<Mask>().Select( x => x.AsDef() );
+
 			AppConfig.Current.GadgetPos = new Point( Top, Left );
 			AppConfig.Current.Save();
 		}
@@ -45,6 +52,14 @@ namespace ScreenMask
 			Left = P.Y;
 
 			AppConfig.Current.Masks.Do( x => CreateMask( x ) );
+
+			if( AppConfig.Current.PreventSleep )
+			{
+				( ( ContextMenu ) Resources[ "MainMenu" ] ).Items
+					.CastOnly<MenuItem>().First( x => x.Name == "PreventSleep" )
+					.IsChecked = true;
+				SetPreventSleep( true );
+			}
 
 			VisualStateManager.GoToElementState( OuterRect, "Idle", false );
 		}

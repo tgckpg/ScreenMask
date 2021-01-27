@@ -13,6 +13,7 @@
         <ContextMenu x:Key="MainMenu">
             <MenuItem Header="New mask" Click="NewMask_Click" />
             <MenuItem Header="Clipping mode" Click="ClippingMode_Click" />
+            <MenuItem x:Name="PreventSleep" Header="Prevent Sleep" Click="TogglePreventSleep" IsChecked="False" IsCheckable="True" />
             <MenuItem Header="All masks">
                 <MenuItem Header="Bring to top" Click="BringAlltoTop_Click" />
                 <MenuItem Header="Delete" Click="RemoveAll_Click" />

@@ -51,5 +51,6 @@ namespace ScreenMask.Config
 	{
 		public string Title { get; set; }
 		public Vector4 Offsets { get; set; } = Vector4.Zero;
+		public Rect Bounds { get; set; }
 	}
 }

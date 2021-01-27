@@ -59,6 +59,16 @@ namespace ScreenMask.Config
 			}
 		}
 
+		public bool PreventSleep
+		{
+			get => JsonSerializer.Deserialize<bool>( Conf.AppSettings.Settings[ "PreventSleep" ]?.Value ?? "false" );
+			set
+			{
+				Conf.AppSettings.Settings.Remove( "PreventSleep" );
+				Conf.AppSettings.Settings.Add( new KeyValueConfigurationElement( "PreventSleep", JsonSerializer.Serialize( value ) ) );
+			}
+		}
+
 		public IEnumerable<ProcessProfile> ProcessProfiles
 		{
 			get
